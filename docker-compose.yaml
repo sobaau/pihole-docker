@@ -1,0 +1,28 @@
+version: "2"
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole-unbound
+    image: sobaau/pi-hole:latest
+    ports:
+      - "192.168.1.219:53:53/tcp"
+      - "192.168.1.219:53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+    environment:
+      TZ: 'Australia/Brisbane'
+      WEBPASSWORD: 'INSERTPASSWORD'
+    # Volumes store your data between container upgrades
+    volumes:
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+      - './etc-pihole-updatelists/:/etc/pihole-updatelists/'
+      - './etc-unbound/:/etc/unbound/unbound.conf.d/'
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    restart: unless-stopped
